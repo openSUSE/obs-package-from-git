@@ -96,7 +96,7 @@ cleanup_git_in_chroot() {
 # out:
 #   package in $OSC_BUILD_ROOT/$TMPGIT/package
 make_package() {
-    sudo chroot --userspec=$USER $OSC_BUILD_ROOT \
+    sudo chroot --userspec=$(id -u) $OSC_BUILD_ROOT \
         sh -c "cd ${TMPGIT#$OSC_BUILD_ROOT}; $1"
 }
 
