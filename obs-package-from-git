@@ -68,7 +68,8 @@ init_build_root() {
     local SUCCESS_FILE=/tmp/build-root-ready
 
     rm -f $OSC_BUILD_ROOT/$SUCCESS_FILE
-    sed -i -e "/^%build/atouch $SUCCESS_FILE; : intentional fail; exit 1" *.spec
+    local MSG="intentional failure - now the build root is set up and we can make a tarball there"
+    sed -i -e "/^%build/atouch $SUCCESS_FILE; : $MSG; exit 1" *.spec
     osc build --build-uid=caller || :
     rm $OSC_BUILD_ROOT/$SUCCESS_FILE # fails if not present
 }
