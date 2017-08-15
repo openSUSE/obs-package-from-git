@@ -7,8 +7,8 @@ set -eu
 
 # Minimal dependencies:
 # - git-core (not used here; our caller, typically Jenkins, will have used it)
-# - osc
-# - build
+# - osc    https://github.com/openSUSE/osc
+# - build  https://github.com/openSUSE/obs-build
 
 main() {
     local USAGE_TEXT='
@@ -70,7 +70,12 @@ init_build_root() {
     rm -f $OSC_BUILD_ROOT/$SUCCESS_FILE
     local MSG="intentional failure - now the build root is set up and we can make a tarball there"
     sed -i -e "/^%build/atouch $SUCCESS_FILE; : $MSG; exit 1" *.spec
-    osc build --build-uid=caller || :
+    # bsc#1053839 interaction to ask about cleaning the build root
+    local CLEAN
+    if [ -f $OSC_BUILD_ROOT/not-ready ]; then
+        CLEAN=--clean
+    fi
+    osc build $CLEAN --build-uid=caller || :
     rm $OSC_BUILD_ROOT/$SUCCESS_FILE # fails if not present
 }
 
